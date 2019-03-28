@@ -22,6 +22,7 @@ using Fusee.Engine.GUI;
 using Fusee.Xene;
 
 using System.Linq;
+
 using System.Collections.Generic;
 
 namespace FuseeApp
@@ -523,20 +524,6 @@ namespace FuseeApp
         private float newYRot;
         private float d = 5;
 
-        private CameraType cameraType
-        {
-            get
-            {
-                return cameraType;
-            }
-
-            set
-            {
-                cameraType = ((int)cameraType + 1) <= 2 ? value : 0;
-
-            }
-
-        }
 
 
 

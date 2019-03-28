@@ -682,11 +682,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\MCH\\Documents\\Fusee3D\\DroneflightV3\\MyFirstFusee.csproj",
+      "projectUniqueName": "C:\\Users\\MCH\\Documents\\Fusee3D\\DroneTest\\MyFirstFusee.csproj",
       "projectName": "MyFirstFusee",
-      "projectPath": "C:\\Users\\MCH\\Documents\\Fusee3D\\DroneflightV3\\MyFirstFusee.csproj",
+      "projectPath": "C:\\Users\\MCH\\Documents\\Fusee3D\\DroneTest\\MyFirstFusee.csproj",
       "packagesPath": "C:\\Users\\MCH\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\MCH\\Documents\\Fusee3D\\DroneflightV3\\obj\\",
+      "outputPath": "C:\\Users\\MCH\\Documents\\Fusee3D\\DroneTest\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
