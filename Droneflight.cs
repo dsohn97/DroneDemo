@@ -85,7 +85,7 @@ namespace FuseeApp
         // if(Keyboard.WS != 0) return;
         // void ResetTilt();
 
-        TransformComponent DroneRoot { get; }
+        SceneNodeContainer DroneRoot { get; }
 
         List<TransformComponent> Rotors { get; }
 
@@ -131,21 +131,22 @@ namespace FuseeApp
         private float Pitch;
         private CameraType _cameraType;
         private SceneContainer _droneScene;
-        public TransformComponent DroneRoot
+        private SceneNodeContainer _droneRoot;
+        public SceneNodeContainer DroneRoot
         {
             get
             {
-                return _droneScene.Children.FindNodes(node => node.Name == "Body")?.FirstOrDefault().GetTransform();
+                return _droneScene.ToSceneNodeContainer();
             }
         }
         public List<TransformComponent> Rotors
         {
             get
             {
-                Rotors.Add(_droneScene.Children.FindNodes(node => node.Name == "Rotor back left")?.FirstOrDefault()?.GetTransform());
-                Rotors.Add(_droneScene.Children.FindNodes(node => node.Name == "Rotor front left")?.FirstOrDefault()?.GetTransform());
-                Rotors.Add(_droneScene.Children.FindNodes(node => node.Name == "Rotor front right")?.FirstOrDefault()?.GetTransform());
-                Rotors.Add(_droneScene.Children.FindNodes(node => node.Name == "Rotor back right")?.FirstOrDefault()?.GetTransform());
+                Rotors.Add(DroneRoot.FindNodes(node => node.Name == "Rotor back left")?.FirstOrDefault()?.GetTransform());
+                Rotors.Add(DroneRoot.FindNodes(node => node.Name == "Rotor front left")?.FirstOrDefault()?.GetTransform());
+                Rotors.Add(DroneRoot.FindNodes(node => node.Name == "Rotor front right")?.FirstOrDefault()?.GetTransform());
+                Rotors.Add(DroneRoot.FindNodes(node => node.Name == "Rotor back right")?.FirstOrDefault()?.GetTransform());
                 return Rotors;
             }
         }
@@ -163,10 +164,11 @@ namespace FuseeApp
         public static float i = 0;
         public Drone()
         {
+            
 
-            _position = DroneRoot.Translation;
-            _rotation = DroneRoot.Rotation;
-            _scale = DroneRoot.Scale;
+            _position = DroneRoot.GetTransform().Translation;
+            _rotation = DroneRoot.GetTransform().Rotation;
+            _scale = DroneRoot.GetTransform().Scale;
 
         }
 
@@ -365,9 +367,10 @@ namespace FuseeApp
                                                 float3.UnitY
                                                 );
             }
-            DroneRoot.Translation = _position;
-            DroneRoot.Rotation = _rotation;
-            DroneRoot.Scale = _scale;
+            var Drone = DroneRoot.GetTransform();
+            Drone.Translation = _position;
+            Drone.Rotation = _rotation;
+            Drone.Scale = _scale;
         }
     }
 
@@ -494,7 +497,7 @@ namespace FuseeApp
 
         private const float RotationSpeed = 7;
         float i = 1;
-        private SceneContainer _droneScene;
+        public SceneContainer _droneScene;
         private SceneRenderer _sceneRenderer;
         private TransformComponent _CubeTransform;
         private TransformComponent _RRBTransform;
@@ -509,6 +512,7 @@ namespace FuseeApp
         private float speedz;
         private float Yaw;
         private float Pitch;
+        private SceneNodeContainer DroneRoot;
 
         private CameraType _cameraType;
         // private float4x4 mtxRot, mtxCam;
@@ -558,6 +562,8 @@ namespace FuseeApp
             _RRBTransform = _droneScene.Children.FindNodes(node => node.Name == "Rotor back right")?.FirstOrDefault()?.GetTransform();
 
             _RRFTransform = _droneScene.Children.FindNodes(node => node.Name == "Rotor front right")?.FirstOrDefault()?.GetTransform();
+
+            DroneRoot = _droneScene.Children.FindNodes(node => node.Name == "Body")?.FirstOrDefault();
 
             _drone = new Drone();
             _camera = new Camera();
