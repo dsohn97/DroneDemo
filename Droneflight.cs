@@ -161,9 +161,8 @@ namespace FuseeApp
         {
             _cnt = cnt;
 
-            _position = DroneRoot.GetTransform().Translation;
-            _rotation = DroneRoot.GetTransform().Rotation;
-            _scale = DroneRoot.GetTransform().Scale;
+             
+            
 
         }
 
@@ -172,7 +171,7 @@ namespace FuseeApp
 
             get
             {
-                return _position;
+                return DroneRoot.GetTransform().Translation;
             }
             set
             {
@@ -295,11 +294,13 @@ namespace FuseeApp
         }
         public float4x4 Update()
         {
+            _rotation = DroneRoot.GetTransform().Rotation;
+            _scale = DroneRoot.GetTransform().Scale;
             Idle();
             Tilt();
             MoveRotor();
-            var camPosOld = new float3(_position.x, _position.y + 1, _position.z - d);
-            var DroneposOld = _position;
+            var camPosOld = new float3(Position.x, Position.y + 1, Position.z - d);
+            var DroneposOld = DroneRoot.GetTransform().Translation;
             if (Mouse.LeftButton)
             {
                 _rotation.y = _rotation.y + (Mouse.XVel * 0.0005f);
@@ -322,7 +323,7 @@ namespace FuseeApp
 
             float posVelX = -Keyboard.WSAxis * speedx;
             float posVelZ = -Keyboard.ADAxis * speedz;
-            float3 newPos = _position;
+            float3 newPos = Position;
 
             newPos += float3.Transform(float3.UnitX * posVelZ, orientation(_rotation.y, 0));
             newPos += float3.Transform(float3.UnitZ * posVelX, orientation(_rotation.y, 0));
@@ -337,7 +338,8 @@ namespace FuseeApp
                     height = 0;
                 newPos.y -= height;
             }
-            var dronePosNew = _position;
+            
+            var dronePosNew = newPos;
 
             var posVec = float3.Normalize(camPosOld - dronePosNew);
             var camposnew = dronePosNew + posVec * d;
@@ -577,16 +579,17 @@ namespace FuseeApp
 
                 
 
-
-            var viewdrone = _drone.Update();
-            var viewcam = _camera.Update();
+            
+                var viewdrone = _drone.Update();
+            
+                var viewcam = _camera.Update();
             
             if (_cameraType == CameraType.FREE)
                 view = viewcam;
-            else 
+            if (_cameraType == CameraType.FOLLOW || _cameraType == CameraType.DRONE) 
                 view = viewdrone;
 
-            RC.View = viewcam;
+            RC.View = view;
 
             // Render the scene loaded in Init()
 
