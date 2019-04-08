@@ -19,3 +19,6 @@ C:\Users\MCH\Documents\Fusee3D\DroneTest\bin\Debug\netstandard2.0\MyFirstFusee.d
 C:\Users\MCH\Documents\Fusee3D\DroneTest\bin\Debug\netstandard2.0\MyFirstFusee.pdb
 C:\Users\MCH\Documents\Fusee3D\DroneTest\obj\Debug\netstandard2.0\MyFirstFusee.dll
 C:\Users\MCH\Documents\Fusee3D\DroneTest\obj\Debug\netstandard2.0\MyFirstFusee.pdb
+C:\Users\MCH\Documents\Fusee3D\DroneTest\bin\Debug\netstandard2.0\Assets\Lato-Black.ttf
+C:\Users\MCH\Documents\Fusee3D\DroneTest\bin\Debug\netstandard2.0\Assets\texture.frag
+C:\Users\MCH\Documents\Fusee3D\DroneTest\bin\Debug\netstandard2.0\Assets\texture.vert
