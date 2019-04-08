@@ -240,6 +240,7 @@ namespace FuseeApp
             var camPosOld = new float3(Position.x, Position.y + 1, Position.z - d);
             var DroneposOld = DroneRoot.GetTransform().Translation;
             float mouse = 0;
+            var rot = _rotation.y;
             if (Mouse.LeftButton)
             {
                  mouse = (Mouse.XVel * 0.0005f);
@@ -305,7 +306,7 @@ namespace FuseeApp
             if (_cameraType == CameraType.DRONE)
             {
                 view = float4x4.LookAt(
-                                                      new float3(DroneposOld) + d * float3.Transform(float3.UnitZ, orientation(_rotation.y, -0.3f)),
+                                                      new float3(DroneposOld) + d * float3.Transform(float3.UnitZ, orientation(rot, -0.3f)),
                                                       new float3(Position),
                                                       float3.UnitY
                                                       );
@@ -505,7 +506,9 @@ namespace FuseeApp
             // Load the drone model
             _droneScene = AssetStorage.Get<SceneContainer>("GroundNoMat.fus");
             var droneBody = _droneScene.Children.FindNodes(node => node.Name == "Body")?.FirstOrDefault();
+            
             _gamepad = Devices.First(dev => dev.Category == DeviceCategory.GameController);
+
             _drone = new Drone(droneBody, _gamepad);
 
             _camera = new Camera(_gamepad);
