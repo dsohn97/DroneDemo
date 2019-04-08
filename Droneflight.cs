@@ -29,71 +29,7 @@ namespace FuseeApp
 
 {
 
-    public interface ICamera
-    {
-        float MovementSpeed { get; set; }
-
-        float MouseSensitivity { get; set; }
-
-        // get => Mouse.XVel;
-        float Yaw { get; }
-
-        float Pitch { get; }
-
-        // => SET creates new view matrix
-        Quaternion Rotation { get; set; }
-
-        // => SET creates new view matrix
-        float3 Position { get; set; }
-
-        float4x4 ViewMatrix { get; }
-
-        CameraType cameraType { get; set; }
-
-        void SetCameraType();
-
-        float3 ForwardVector { get; }
-
-        // direction.normalize()
-        // e.g. this.Position = Transform(direction * ammount, orientation(Yaw, Pitch))
-        void SetPositionLocally(float3 direction);
-
-        // call this in RenderAFrame()
-        float4x4 Update();
-
-    }
-
-    interface IDrone
-    {
-        // set => Tilt()
-        float3 Position { get; set; }
-        Quaternion Rotation { get; set; }
-
-        float3 Scale { get; set; }
-
-        float RotationSpeed { get; set; }
-        float idle { get; set; }
-
-        void Idle();
-
-        void MoveRotor();
-
-
-        // tiltTo = position.normalize()
-        void Tilt();
-
-        // if(Keyboard.WS != 0) return;
-        // void ResetTilt();
-
-        SceneNodeContainer DroneRoot { get; }
-
-
-        // call this in RenderAFrame()
-        // DroneRoot.GetComponent<TransformComponent>().Positon // etc. updaten
-        float4x4 Update();
-
-    }
-
+   
 
 
     public enum CameraType
@@ -113,7 +49,7 @@ namespace FuseeApp
 
     }
 
-    internal class Drone : IDrone
+    internal class Drone 
     {
         // fields 
 
@@ -131,8 +67,6 @@ namespace FuseeApp
         private float Yaw;
         private float Pitch;
         public float4x4 view;
-
-        private CameraType _cameraType;
         private TransformComponent _droneRoot;
         public SceneNodeContainer DroneRoot
         {
@@ -292,7 +226,7 @@ namespace FuseeApp
                 rbr.Rotation.y = i * TimeSinceStart;
             
         }
-        public float4x4 Update()
+        public float4x4 Update(CameraType _cameraType)
         {
             _rotation = DroneRoot.GetTransform().Rotation;
             _scale = DroneRoot.GetTransform().Scale;
@@ -323,7 +257,7 @@ namespace FuseeApp
 
             float posVelX = -Keyboard.WSAxis * speedx;
             float posVelZ = -Keyboard.ADAxis * speedz;
-            float3 newPos = Position;
+            float3 newPos = DroneposOld;
 
             newPos += float3.Transform(float3.UnitX * posVelZ, orientation(_rotation.y, 0));
             newPos += float3.Transform(float3.UnitZ * posVelX, orientation(_rotation.y, 0));
@@ -341,13 +275,14 @@ namespace FuseeApp
             
             var dronePosNew = newPos;
 
-            var posVec = float3.Normalize(camPosOld - dronePosNew);
-            var camposnew = dronePosNew + posVec * d;
+            // var posVec = float3.Normalize(camPosOld - dronePosNew);
+            // var camposnew = dronePosNew + posVec * d;
             if (Mouse.RightButton)
             {
                 Yaw += Mouse.XVel * 0.0005f;
                 Pitch += Mouse.YVel * 0.0005f;
             }
+
             if (_cameraType == CameraType.DRONE)
             {
               view =  float4x4.LookAt(
@@ -372,7 +307,7 @@ namespace FuseeApp
             }
     }
 
-    internal class Camera : ICamera
+    internal class Camera
     {
         public float3 _Position;
         public float3 _ForwardVector;
@@ -486,13 +421,16 @@ namespace FuseeApp
         }
         public float4x4 Update()
         {
-            if (Keyboard.GetKey(KeyCodes.Q))
+            if (Keyboard.IsKeyUp(KeyCodes.Q))
                 SetCameraType();
+            if (cameraType == CameraType.FREE){
             Position += float3.Transform(float3.UnitX * Keyboard.ADAxis * 0.2f, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
             Position += float3.Transform(float3.UnitZ * Keyboard.WSAxis * 0.2f, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
             if (_cameraType == CameraType.FREE)
             SetPositionLocally(Position);
+            }
             return view;
+            
         }
         
     }
@@ -578,16 +516,15 @@ namespace FuseeApp
                     _cameraType = CameraType.FREE;
 
                 
-
+            if (Keyboard.IsKeyUp(KeyCodes.Q))
+                _cameraType++;
             
-                var viewdrone = _drone.Update();
-            
-                var viewcam = _camera.Update();
+            Diagnostics.Log(_cameraType);
             
             if (_cameraType == CameraType.FREE)
-                view = viewcam;
+                view = _camera.Update();
             if (_cameraType == CameraType.FOLLOW || _cameraType == CameraType.DRONE) 
-                view = viewdrone;
+                view = _drone.Update(_cameraType);
 
             RC.View = view;
 
