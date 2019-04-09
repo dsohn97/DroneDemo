@@ -263,8 +263,8 @@ namespace FuseeApp
                     speedz += 0.005f;
 
 
-            float posVelX = -Keyboard.WSAxis * speedx - _gamepad.GetAxis(1) * 0.35f;
-            float posVelZ = -Keyboard.ADAxis * speedz - _gamepad.GetAxis(0) * 0.35f;
+            float posVelX = -Keyboard.WSAxis * speedx - _gamepad.GetAxis(1) * 0.25f;
+            float posVelZ = -Keyboard.ADAxis * speedz - _gamepad.GetAxis(0) * 0.25f;
             float3 newPos = DroneposOld;
 
             newPos += float3.Transform(float3.UnitX * posVelZ, orientation(_rotation.y, 0));
@@ -553,6 +553,11 @@ namespace FuseeApp
             Diagnostics.Log(_cameraType);
             }
 
+            if(_gamepad.GetButton(4))
+                TimeScale = 0;
+            if(_gamepad.GetButton(5))
+                TimeScale = 1;
+
             if (_cameraType == CameraType.FREE)
                 view = _camera.Update();
             if (_cameraType == CameraType.FOLLOW || _cameraType == CameraType.DRONE)
@@ -593,7 +598,7 @@ namespace FuseeApp
             var _guiLatoBlack = new FontMap(fontLato, 36);
 
             // Initialize the information text line.
-            var textToDisplay = "Drone Flight Simulation";
+            var textToDisplay = "Drone Simulation";
 
             var text = new TextNodeContainer(
                 textToDisplay,
