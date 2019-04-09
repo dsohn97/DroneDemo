@@ -219,12 +219,11 @@ namespace FuseeApp
             var rfl = DroneRoot.Children.FindNodes(node => node.Name == "Rotor front left")?.FirstOrDefault()?.GetTransform();
             var rfr = DroneRoot.Children.FindNodes(node => node.Name == "Rotor front right")?.FirstOrDefault()?.GetTransform();
             var rbr = DroneRoot.Children.FindNodes(node => node.Name == "Rotor back right")?.FirstOrDefault()?.GetTransform();
-            if (i < 20)
-
+            
+            if (i <= 23)
                 i += 0.05f;
 
-                if (i >= 20)
-                i = 20;
+                
 
 
             rbl.Rotation.y = i * TimeSinceStart;
@@ -266,8 +265,8 @@ namespace FuseeApp
                     speedz += 0.005f;
 
 
-            float posVelX = -Keyboard.WSAxis * speedx - _gamepad.GetAxis(1) * DeltaTime * 3;
-            float posVelZ = -Keyboard.ADAxis * speedz - _gamepad.GetAxis(0) * DeltaTime * 3;
+            float posVelX = -Keyboard.WSAxis * speedx - _gamepad.GetAxis(1) * DeltaTime * 8;
+            float posVelZ = -Keyboard.ADAxis * speedz - _gamepad.GetAxis(0) * DeltaTime * 8;
             float3 newPos = DroneposOld;
 
             newPos += float3.Transform(float3.UnitX * posVelZ, orientation(_rotation.y, 0));
@@ -455,8 +454,8 @@ namespace FuseeApp
                 SetCameraType();
             if (cameraType == CameraType.FREE)
             {
-                Position += float3.Transform(float3.UnitX * (Keyboard.ADAxis + _gamepad.GetAxis(0)) * DeltaTime * 3, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
-                Position += float3.Transform(float3.UnitZ * (Keyboard.WSAxis + _gamepad.GetAxis(1)) * DeltaTime * 3, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
+                Position += float3.Transform(float3.UnitX * (Keyboard.ADAxis + _gamepad.GetAxis(0)) * DeltaTime * 8, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
+                Position += float3.Transform(float3.UnitZ * (Keyboard.WSAxis + _gamepad.GetAxis(1)) * DeltaTime * 8, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
                 if (_cameraType == CameraType.FREE)
                     SetPositionLocally(Position);
             }
