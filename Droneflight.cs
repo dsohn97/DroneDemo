@@ -223,6 +223,9 @@ namespace FuseeApp
 
                 i += 0.05f;
 
+                if (i >= 20)
+                i = 20;
+
 
             rbl.Rotation.y = i * TimeSinceStart;
             rfl.Rotation.y = i * TimeSinceStart;
