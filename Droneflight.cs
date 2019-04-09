@@ -263,8 +263,8 @@ namespace FuseeApp
                     speedz += 0.005f;
 
 
-            float posVelX = -Keyboard.WSAxis * speedx - _gamepad.GetAxis(1) * DeltaTime;
-            float posVelZ = -Keyboard.ADAxis * speedz - _gamepad.GetAxis(0) * DeltaTime;
+            float posVelX = -Keyboard.WSAxis * speedx - _gamepad.GetAxis(1) * DeltaTime * 3;
+            float posVelZ = -Keyboard.ADAxis * speedz - _gamepad.GetAxis(0) * DeltaTime * 3;
             float3 newPos = DroneposOld;
 
             newPos += float3.Transform(float3.UnitX * posVelZ, orientation(_rotation.y, 0));
@@ -452,8 +452,8 @@ namespace FuseeApp
                 SetCameraType();
             if (cameraType == CameraType.FREE)
             {
-                Position += float3.Transform(float3.UnitX * (Keyboard.ADAxis + _gamepad.GetAxis(0)) * DeltaTime, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
-                Position += float3.Transform(float3.UnitZ * (Keyboard.WSAxis + _gamepad.GetAxis(1)) * DeltaTime, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
+                Position += float3.Transform(float3.UnitX * (Keyboard.ADAxis + _gamepad.GetAxis(0)) * DeltaTime * 3, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
+                Position += float3.Transform(float3.UnitZ * (Keyboard.WSAxis + _gamepad.GetAxis(1)) * DeltaTime * 3, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
                 if (_cameraType == CameraType.FREE)
                     SetPositionLocally(Position);
             }
