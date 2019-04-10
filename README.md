@@ -36,13 +36,14 @@ The Controls are mapped to
 		* `Drone Camera` 3rd person follows drones FOV
 			* Drone movement
 				* `LS` move in space
-				* `RB LB` up, down
 				* `RS` rotates drone
+				* `RB LB` up, down
 
 		* `Follow Camera` 3rd person rotates around drone
 			* Camera movement
 				* `LS` move in space
 				* `RS` rotates camera around drone
+				* `RB LB` up, down
 
 
 ## Problem
