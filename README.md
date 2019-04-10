@@ -1,14 +1,14 @@
-# Droneflight_Demo
+# Drone_Demo
 
-Welcome to the Droneflight Demo FUSEE App, which illustrates a method to calculate movement of objects and the camera in Space using `Quaternions`, This method works for 1st and 3rd person views.
+Welcome to the DroneDemo FUSEE App, which illustrates a method to calculate movement of objects and the camera in Space using `Quaternions`, This method works for 1st and 3rd person views.
 
 `Droneflight.cs` contains the source code for a working FUSEE application showing 
 a 3D drone model with 3 different camera types.  
-The drone model was created using Blender and imported as `.fus` file. 
+The drone model was created using blender and imported as `.fus` file. 
 
 ## Controls
 
-The Controls are mapped to
+The controls are mapped to
 
 * Mouse + keyboard
 	* `Q` change `_cameraType`
@@ -51,19 +51,19 @@ The Controls are mapped to
 
 ## Problem
 
-If you Just use normal rotations for moving around in 3D space you get the Problem that your rotatons   will depend on each other so if you want to rotate an object like this 
+If you just use normal rotations for moving around in 3D space you get the problem that your rotatons   will depend on each other so if you want to rotate an object like this 
 
 ```cs
 	_drone.Rotation.Y(Yaw)
 	_drone.Rotation.X(Pitch)
 ```
-you will get a Rotation around the y-axis and then most likely your x-axis rotaton will rotate your drone in an unwanted direction if your Yaw angle is close to 90° it will even result in a roll instead of a pitch.
+you will get a rotation around the y-axis and then most likely your x-axis rotaton will rotate your drone in an unwanted direction if your Yaw angle is close to 90° it will even result in a roll instead of a pitch.
 
 `Local Yaw + Local Pitch = Global Roll`
 
 ## Solution
 
-So to avoid this we will use Quaternions for our calculations  
+So to avoid this we will use quaternions for our calculations  
 
 Quaternions are 4 dimensional numbers with 1 real part `w` and three imaginary parts `i, j and k`
 
