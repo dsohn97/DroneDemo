@@ -635,7 +635,6 @@ namespace FuseeApp
             };
         }
 
-
         // Is called when the window was resized
         public override void Resize()
 
