@@ -256,7 +256,7 @@ namespace FuseeApp
             if (Keyboard.ADAxis == 0)
                 speedz = 0.02f;
 
-            if (Keyboard.WSAxis != 0)
+            // if (Keyboard.WSAxis != 0)
                 if (speedx <= 0.5f)
                     speedx += 0.005f;
 
@@ -265,8 +265,8 @@ namespace FuseeApp
                     speedz += 0.005f;
 
 
-            float posVelX = -Keyboard.WSAxis * speedx - _gamepad.GetAxis(1) * DeltaTime * 8;
-            float posVelZ = -Keyboard.ADAxis * speedz - _gamepad.GetAxis(0) * DeltaTime * 8;
+            float posVelX = -Keyboard.WSAxis * speedx * (DeltaTime * 15) - _gamepad.GetAxis(1) * DeltaTime * 8;
+            float posVelZ = -Keyboard.ADAxis * speedz * (DeltaTime * 15) - _gamepad.GetAxis(0) * DeltaTime * 8;
             float3 newPos = DroneposOld;
 
             newPos += float3.Transform(float3.UnitX * posVelZ, orientation(_rotation.y, 0));
