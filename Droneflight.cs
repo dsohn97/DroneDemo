@@ -338,6 +338,7 @@ namespace FuseeApp
         public float _Yaw;
         public float _Pitch;
         public InputDevice _gamepad;
+        private float _MouseSensitivity;
         public Camera(InputDevice gamepad)
         {
             _gamepad = gamepad;
@@ -357,11 +358,11 @@ namespace FuseeApp
         {
             get
             {
-                return MouseSensitivity;
+                return _MouseSensitivity;
             }
             set
             {
-                MouseSensitivity = value;
+                _MouseSensitivity = value;
             }
         }
         public float Yaw
@@ -370,7 +371,7 @@ namespace FuseeApp
             {
                 float yaw = 0;
                 if (Mouse.RightButton)
-                    yaw = Mouse.XVel * 0.00005f;
+                    yaw = Mouse.XVel * MouseSensitivity;
             
                     _Yaw += yaw + (_gamepad.GetAxis(2) * DeltaTime);
                 return _Yaw;
@@ -382,7 +383,7 @@ namespace FuseeApp
             {
                 float pitch = 0;
                 if (Mouse.RightButton)
-                    pitch = Mouse.YVel * 0.00005f;
+                    pitch = Mouse.YVel * MouseSensitivity;
 
                     _Pitch +=  pitch + (_gamepad.GetAxis(3) * -DeltaTime);
                 return _Pitch;
@@ -436,7 +437,7 @@ namespace FuseeApp
         {
             get
             {
-                return ViewMatrix;
+                return float4x4.LookAt(Position, Position + ForwardVector, float3.UnitY);;
             }
         }
         public void SetCameraType()
@@ -446,10 +447,11 @@ namespace FuseeApp
         }
         public void SetPositionLocally(float3 pos)
         {
-            view = float4x4.LookAt(pos, pos + ForwardVector, float3.UnitY);
+            view = ViewMatrix;
         }
         public float4x4 Update()
-        {
+        {   
+            MouseSensitivity = 0.00005f;
             if (Keyboard.IsKeyUp(KeyCodes.Q) || _gamepad.GetButton(2))
                 SetCameraType();
             if (cameraType == CameraType.FREE)
