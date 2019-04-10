@@ -470,7 +470,7 @@ namespace FuseeApp
 
     [FuseeApplication(Name = "Droneflight", Description = "Droneflight Demo")]
 
-    public class MyFirstFusee : RenderCanvas
+    public class DroneDemo : RenderCanvas
 
     {
 
