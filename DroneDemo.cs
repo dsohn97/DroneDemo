@@ -106,9 +106,9 @@ namespace FuseeApp
             }
             set
             {
-              _position = new float3(value);
+                _position = new float3(value);
             }
-            
+
         }
         public float3 Rotation
         {
@@ -219,17 +219,14 @@ namespace FuseeApp
             var rfl = DroneRoot.Children.FindNodes(node => node.Name == "Rotor front left")?.FirstOrDefault()?.GetTransform();
             var rfr = DroneRoot.Children.FindNodes(node => node.Name == "Rotor front right")?.FirstOrDefault()?.GetTransform();
             var rbr = DroneRoot.Children.FindNodes(node => node.Name == "Rotor back right")?.FirstOrDefault()?.GetTransform();
-            
+
             if (i <= 23)
                 i += 0.05f;
 
-                
-
-
             rbl.Rotation.y = i * TimeSinceStart;
             rfl.Rotation.y = i * TimeSinceStart;
-            rfr.Rotation.y = -i * TimeSinceStart;
-            rbr.Rotation.y = -i * TimeSinceStart;
+            rfr.Rotation.y = i * TimeSinceStart;
+            rbr.Rotation.y = i * TimeSinceStart;
 
         }
         public float4x4 Update(CameraType _cameraType)
@@ -245,7 +242,7 @@ namespace FuseeApp
             var rot = _rotation.y;
             if (Mouse.LeftButton)
             {
-                 mouse = (Mouse.XVel * 0.0005f);
+                mouse = (Mouse.XVel * 0.0005f);
             }
 
             _rotation.y = _rotation.y + mouse - _gamepad.GetAxis(4) * DeltaTime + _gamepad.GetAxis(5) * DeltaTime;
@@ -257,8 +254,8 @@ namespace FuseeApp
                 speedz = 0.02f;
 
             // if (Keyboard.WSAxis != 0)
-                if (speedx <= 0.5f)
-                    speedx += 0.005f;
+            if (speedx <= 0.5f)
+                speedx += 0.005f;
 
             if (Keyboard.ADAxis != 0)
                 if (speedz <= 0.5f)
@@ -287,7 +284,7 @@ namespace FuseeApp
 
             var posVec = float3.Normalize(camPosOld - Position);
             var camposnew = Position + posVec * d;
-            Yaw += _gamepad.GetAxis(2) *DeltaTime;
+            Yaw += _gamepad.GetAxis(2) * DeltaTime;
             Pitch += _gamepad.GetAxis(3) * DeltaTime;
             if (Mouse.RightButton)
             {
@@ -300,10 +297,11 @@ namespace FuseeApp
                 d += 0.1f;
             }
             if (Keyboard.GetKey(KeyCodes.X))
-                if (Scale.y + Scale.x + Scale.z >= 0.03){
+                if (Scale.y + Scale.x + Scale.z >= 0.03)
+                {
                     Scale = new float3(Scale.x - 0.01f, Scale.y - 0.01f, Scale.z - 0.01f);
-                d -= 0.1f;
-            }
+                    d -= 0.1f;
+                }
 
             if (_cameraType == CameraType.DRONE)
             {
@@ -372,8 +370,8 @@ namespace FuseeApp
                 float yaw = 0;
                 if (Mouse.RightButton)
                     yaw = Mouse.XVel * MouseSensitivity;
-            
-                    _Yaw += yaw + (_gamepad.GetAxis(2) * DeltaTime);
+
+                _Yaw += yaw + (_gamepad.GetAxis(2) * DeltaTime);
                 return _Yaw;
             }
         }
@@ -385,7 +383,7 @@ namespace FuseeApp
                 if (Mouse.RightButton)
                     pitch = Mouse.YVel * MouseSensitivity;
 
-                    _Pitch +=  pitch + (_gamepad.GetAxis(3) * -DeltaTime);
+                _Pitch += pitch + (_gamepad.GetAxis(3) * -DeltaTime);
                 return _Pitch;
             }
         }
@@ -437,7 +435,7 @@ namespace FuseeApp
         {
             get
             {
-                return float4x4.LookAt(Position, Position + ForwardVector, float3.UnitY);;
+                return float4x4.LookAt(Position, Position + ForwardVector, float3.UnitY); ;
             }
         }
         public void SetCameraType()
@@ -450,7 +448,7 @@ namespace FuseeApp
             view = ViewMatrix;
         }
         public float4x4 Update()
-        {   
+        {
             MouseSensitivity = 0.00005f;
             if (Keyboard.IsKeyUp(KeyCodes.Q) || _gamepad.GetButton(2))
                 SetCameraType();
@@ -492,9 +490,6 @@ namespace FuseeApp
         private InputDevice _gamepad;
         private float wait;
 
-
-
-
         // Init is called on startup. 
         public override void Init()
 
@@ -510,15 +505,12 @@ namespace FuseeApp
             // Load the drone model
             _droneScene = AssetStorage.Get<SceneContainer>("GroundNoMat.fus");
             var droneBody = _droneScene.Children.FindNodes(node => node.Name == "Body")?.FirstOrDefault();
-            
+
             _gamepad = Devices.First(dev => dev.Category == DeviceCategory.GameController);
 
             _drone = new Drone(droneBody, _gamepad);
 
             _camera = new Camera(_gamepad);
-
-            
-
 
             // Wrap a SceneRenderer around the model.
 
@@ -526,10 +518,6 @@ namespace FuseeApp
             _guiRenderer = new SceneRenderer(_gui);
 
             DroneRoot = _droneScene.Children.FindNodes(node => node.Name == "Body")?.FirstOrDefault();
-
-
-            
-
         }
 
         // RenderAFrame is called once a frame
@@ -546,20 +534,21 @@ namespace FuseeApp
             // Switch between Drone and Freefly            
             if (_cameraType == CameraType.Reset)
                 _cameraType = CameraType.FREE;
-            
+
             wait++;
-            
+
             if (wait >= 25)
-                if (Keyboard.IsKeyUp(KeyCodes.Q)||_gamepad.GetButton(2)){
-                _cameraType++;
-                wait = 0;
+                if (Keyboard.IsKeyUp(KeyCodes.Q) || _gamepad.GetButton(2))
+                {
+                    _cameraType++;
+                    wait = 0;
 
-            Diagnostics.Log(_cameraType);
-            }
+                    Diagnostics.Log(_cameraType);
+                }
 
-            if(_gamepad.GetButton(4))
+            if (_gamepad.GetButton(4))
                 TimeScale = 0;
-            if(_gamepad.GetButton(5))
+            if (_gamepad.GetButton(5))
                 TimeScale = 1;
 
             if (_cameraType == CameraType.FREE)
@@ -569,7 +558,7 @@ namespace FuseeApp
 
             RC.View = view;
 
-            
+
 
             // Render the scene loaded in Init()
 
