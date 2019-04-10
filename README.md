@@ -18,14 +18,16 @@ The Controls are mapped to
 		
 		* `Drone Camera` 3rd person follows drones FOV
 			* Drone movement
-				* `WS` fowards, backwards
-				* `AD` to the sides
+				* `WASD` move in space
 				* `R F` up, down
 				* `LMB + Mouse move` rotates drone
 
 		* `Follow Camera` 3rd person rotates around drone
 			* Camera movement
-				* `RMB + Mouse move` rotates camera around drone
+				* `WASD` move in space
+				* `R F` up, down
+				* `LMB + Mouse move` rotates drone
+				* `RMB + mouse move` rotate view
 			
 * Gamepad
 	* `Y` change `_cameraType`
@@ -36,12 +38,13 @@ The Controls are mapped to
 		* `Drone Camera` 3rd person follows drones FOV
 			* Drone movement
 				* `LS` move in space
-				* `RS` rotates drone
+				* `LT RT` rotates drone
 				* `RB LB` up, down
 
 		* `Follow Camera` 3rd person rotates around drone
 			* Camera movement
 				* `LS` move in space
+				* `LT RT` rotates drone
 				* `RS` rotates camera around drone
 				* `RB LB` up, down
 
