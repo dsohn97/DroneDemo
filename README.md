@@ -74,4 +74,4 @@ or change the position of an object
 	_drone.Translation.Z += float3.Transform(float3.UnitZ * a, orientation(Yaw, Pitch));
 ```
 
-With this variant you can relatively easy create a smooth movement in your 3D application.
+With this variant you can relatively easy create smooth movement in your 3D application.
