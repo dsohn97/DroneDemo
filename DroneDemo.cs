@@ -164,7 +164,6 @@ namespace FuseeApp
             if (idle >= 0.99f)
                 idle = 0.01f;
         }
-
         public void Tilt()
         {
             if (Keyboard.WSAxis == 0)
@@ -212,7 +211,6 @@ namespace FuseeApp
                             Quaternion.FromAxisAngle(float3.UnitX, Pitch);
             return Orientation;
         }
-
         public void MoveRotor()
         {
             var rbl = DroneRoot.Children.FindNodes(node => node.Name == "Rotor back left")?.FirstOrDefault()?.GetTransform();
@@ -327,7 +325,6 @@ namespace FuseeApp
             return view;
         }
     }
-
     internal class Camera
     {
         public float3 _Position;
@@ -464,7 +461,6 @@ namespace FuseeApp
         }
 
     }
-
 
     [FuseeApplication(Name = "Droneflight", Description = "Droneflight Demo")]
 
