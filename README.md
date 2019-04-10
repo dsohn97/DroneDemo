@@ -10,7 +10,7 @@ The drone model was created using Blender and imported as `.fus` file.
 
 The Controls are mapped to
 
-* Camera
+* Mouse + keyboard
 	* `Q` change `_cameraType`
 		* `Free Camera` 1st person free flight
 			* `WASD` move in space
@@ -20,12 +20,29 @@ The Controls are mapped to
 			* Drone movement
 				* `WS` fowards, backwards
 				* `AD` to the sides
-				* `RF` up, down
+				* `R F` up, down
 				* `LMB + Mouse move` rotates drone
 
 		* `Follow Camera` 3rd person rotates around drone
 			* Camera movement
 				* `RMB + Mouse move` rotates camera around drone
+			
+* Gamepad
+	* `Y` change `_cameraType`
+		* `Free Camera` 1st person free flight
+			* `LS` move in space
+			* `RS` rotate view
+		
+		* `Drone Camera` 3rd person follows drones FOV
+			* Drone movement
+				* `LS` move in space
+				* `RB LB` up, down
+				* `RS` rotates drone
+
+		* `Follow Camera` 3rd person rotates around drone
+			* Camera movement
+				* `LS` move in space
+				* `RS` rotates camera around drone
 
 
 ## Problem
