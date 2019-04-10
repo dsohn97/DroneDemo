@@ -179,33 +179,28 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\MCH\\.nuget\\packages\\": {},
-    "C:\\ProgramData\\Xamarin\\NuGet\\": {},
+    "C:\\Users\\Daniel\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\MCH\\Documents\\Fusee3D\\DroneTest\\DroneDemo.csproj",
+      "projectUniqueName": "C:\\Users\\Daniel\\Documents\\Git\\DroneTest\\DroneDemo.csproj",
       "projectName": "DroneDemo",
-      "projectPath": "C:\\Users\\MCH\\Documents\\Fusee3D\\DroneTest\\DroneDemo.csproj",
-      "packagesPath": "C:\\Users\\MCH\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\MCH\\Documents\\Fusee3D\\DroneTest\\obj\\",
+      "projectPath": "C:\\Users\\Daniel\\Documents\\Git\\DroneTest\\DroneDemo.csproj",
+      "packagesPath": "C:\\Users\\Daniel\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Daniel\\Documents\\Git\\DroneTest\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\ProgramData\\Xamarin\\NuGet\\",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\MCH\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\Daniel\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netstandard2.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

@@ -228,8 +228,8 @@ namespace FuseeApp
 
             rbl.Rotation.y = i * TimeSinceStart;
             rfl.Rotation.y = i * TimeSinceStart;
-            rfr.Rotation.y = i * TimeSinceStart;
-            rbr.Rotation.y = i * TimeSinceStart;
+            rfr.Rotation.y = -i * TimeSinceStart;
+            rbr.Rotation.y = -i * TimeSinceStart;
 
         }
         public float4x4 Update(CameraType _cameraType)
