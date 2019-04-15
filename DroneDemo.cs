@@ -325,8 +325,8 @@ namespace FuseeApp
     internal class Camera
     {
         public float3 _Position;
-        public CameraType _cameraType;
         public float4x4 view;
+        private CameraType _cameraType;
         public float _Yaw;
         public float _Pitch;
         public InputDevice _gamepad;
@@ -434,18 +434,16 @@ namespace FuseeApp
         }
         public void SetCameraType()
         {
-            cameraType++;
-            Diagnostics.Log("Der Camera Typ ist " + _cameraType);
+            // cameraType++;
+            // Diagnostics.Log("Der Camera Typ ist " + _cameraType);
         }
         public void SetPositionLocally(float3 pos)
         {
             view = ViewMatrix;
         }
-        public float4x4 Update()
+        public float4x4 Update(CameraType _cameraType)
         {
             MouseSensitivity = 0.00005f;
-            if (Keyboard.IsKeyUp(KeyCodes.Q) || GamePad.YButton)
-                SetCameraType();
             if (cameraType == CameraType.FREE)
             {
                 Position += float3.Transform(float3.UnitX * (Keyboard.ADAxis + GamePad.LSX) * DeltaTime * 8, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
@@ -544,7 +542,7 @@ namespace FuseeApp
                 TimeScale = 1;
 
             if (_cameraType == CameraType.FREE)
-                view = _camera.Update();
+                view = _camera.Update(_cameraType);
             if (_cameraType == CameraType.FOLLOW || _cameraType == CameraType.DRONE)
                 view = _drone.Update(_cameraType);
 
