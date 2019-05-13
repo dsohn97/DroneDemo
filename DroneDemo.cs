@@ -66,8 +66,8 @@ namespace FuseeApp
         private float d = 5;
         private float Yaw;
         private float Pitch;
-        private InputDevice GamePad = Devices.FirstOrDefault(dev => dev.Category == DeviceCategory.GameController);
-        private InputDevice SpaceMouse = Devices.FirstOrDefault(dev => dev.Category == DeviceCategory.SixDOF);
+        private InputDevice GamePad = Devices.First(dev => dev.Category == DeviceCategory.GameController);
+        private InputDevice SpaceMouse = Devices.First(dev => dev.Category == DeviceCategory.SixDOF);
         public float4x4 view;
         public SceneNodeContainer DroneRoot
             
@@ -335,7 +335,7 @@ namespace FuseeApp
         private CameraType _cameraType;
         public float _Yaw;
         public float _Pitch;
-        public InputDevice GamePad = Devices.FirstOrDefault(dev => dev.Category == DeviceCategory.GameController);
+        public InputDevice GamePad = Devices.First(dev => dev.Category == DeviceCategory.GameController);
         private InputDevice SpaceMouse = Devices.First(dev => dev.Category == DeviceCategory.SixDOF);
         private float _MouseSensitivity;
         public Camera()
