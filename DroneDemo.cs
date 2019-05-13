@@ -48,7 +48,7 @@ namespace FuseeApp
 
 
     }
-
+    #region Drone
     internal class Drone
     {
         // fields 
@@ -66,8 +66,11 @@ namespace FuseeApp
         private float d = 5;
         private float Yaw;
         private float Pitch;
+        private InputDevice GamePad = Devices.FirstOrDefault(dev => dev.Category == DeviceCategory.GameController);
+        private InputDevice SpaceMouse = Devices.FirstOrDefault(dev => dev.Category == DeviceCategory.SixDOF);
         public float4x4 view;
         public SceneNodeContainer DroneRoot
+            
         {
             get
             {
@@ -195,11 +198,11 @@ namespace FuseeApp
                 if (_rotation.z > -0.2)
                     _rotation.z -= 0.01f;
 
-            if (GamePad.LSY != 0)
-                _rotation.x = -GamePad.LSY * 0.25f;
+            if (GamePad.GetAxis((int)Gamepad.LeftStickY) != 0 || SpaceMouse.GetAxis((int)SixDOFAxis.RX) != 0)
+                _rotation.x = -GamePad.GetAxis((int)Gamepad.LeftStickY) * 0.25f + SpaceMouse.GetAxis((int)SixDOFAxis.RX) * 0.0001f;
 
-            if (GamePad.LSX != 0)
-                _rotation.z = GamePad.LSX * 0.25f;
+            if (GamePad.GetAxis((int)Gamepad.LeftStickX) != 0 || SpaceMouse.GetAxis((int)SixDOFAxis.RZ) != 0)
+                _rotation.z = GamePad.GetAxis((int)Gamepad.LeftStickX) * 0.25f + SpaceMouse.GetAxis((int)SixDOFAxis.RZ) * 0.0001f;
 
         }
         public Quaternion orientation(float Yaw, float Pitch)
@@ -240,7 +243,7 @@ namespace FuseeApp
                 mouse = (Mouse.XVel * 0.0005f);
             }
 
-            _rotation.y = _rotation.y + mouse - GamePad.LT * DeltaTime + GamePad.RT * DeltaTime;
+            _rotation.y = _rotation.y + mouse + (SpaceMouse.GetAxis((int)SixDOFAxis.RY) * -0.00005f);// - GamePad.GetButton((int)Gamepad.LeftTrigger) * DeltaTime + GamePad.RT * DeltaTime;
 
             if (Keyboard.WSAxis == 0)
                 speedx = 0.02f;
@@ -257,30 +260,30 @@ namespace FuseeApp
                     speedz += 0.005f;
 
 
-            float posVelX = -Keyboard.WSAxis * speedx * (DeltaTime * 15) - GamePad.LSY * DeltaTime * 8;
-            float posVelZ = -Keyboard.ADAxis * speedz * (DeltaTime * 15) - GamePad.LSX * DeltaTime * 8;
+            float posVelX = -Keyboard.WSAxis * speedx * (DeltaTime * 15) - GamePad.GetAxis((int)Gamepad.LeftStickY) * DeltaTime * 8 + SpaceMouse.GetAxis((int)SixDOFAxis.RX) * 0.0001f;
+            float posVelZ = -Keyboard.ADAxis * speedz * (DeltaTime * 15) - GamePad.GetAxis((int)Gamepad.LeftStickX) * DeltaTime * 8 - SpaceMouse.GetAxis((int)SixDOFAxis.RZ) * 0.0001f;
             float3 newPos = DroneposOld;
 
             newPos += float3.Transform(float3.UnitX * posVelZ, orientation(_rotation.y, 0));
             newPos += float3.Transform(float3.UnitZ * posVelX, orientation(_rotation.y, 0));
 
             // Height
-            if (Keyboard.GetKey(KeyCodes.R) || GamePad.RightButton)
+            if (Keyboard.GetKey(KeyCodes.R) || GamePad.GetButton((int)Gamepad.RightShoulder))
                 newPos.y += 0.1f;
-            if (Keyboard.GetKey(KeyCodes.F) || GamePad.LeftButton)
+            if (Keyboard.GetKey(KeyCodes.F) || GamePad.GetButton((int)Gamepad.LeftShoulder) || SpaceMouse.GetAxis((int)SixDOFAxis.TY) < 0)
             {
                 height = 0.1f;
                 if (newPos.y <= 0.5f)
                     height = 0;
                 newPos.y -= height;
             }
-
+            newPos.y += SpaceMouse.GetAxis((int)SixDOFAxis.TY) * 0.00015f;
             Position = newPos;
 
             var posVec = float3.Normalize(camPosOld - Position);
             var camposnew = Position + posVec * d;
-            Yaw += GamePad.RSX * DeltaTime;
-            Pitch += GamePad.RSY * DeltaTime;
+            Yaw += GamePad.GetAxis((int)Gamepad.RightStickX) * DeltaTime;
+            Pitch += GamePad.GetAxis((int)Gamepad.RightStickY) * DeltaTime;
             if (Mouse.RightButton)
             {
                 Yaw += Mouse.XVel * 0.0005f;
@@ -322,6 +325,9 @@ namespace FuseeApp
             return view;
         }
     }
+    #endregion
+    
+    #region Camera
     internal class Camera
     {
         public float3 _Position;
@@ -329,7 +335,8 @@ namespace FuseeApp
         private CameraType _cameraType;
         public float _Yaw;
         public float _Pitch;
-        public InputDevice _gamepad;
+        public InputDevice GamePad = Devices.FirstOrDefault(dev => dev.Category == DeviceCategory.GameController);
+        private InputDevice SpaceMouse = Devices.First(dev => dev.Category == DeviceCategory.SixDOF);
         private float _MouseSensitivity;
         public Camera()
         {
@@ -365,7 +372,7 @@ namespace FuseeApp
                 if (Mouse.RightButton)
                     yaw = Mouse.XVel * MouseSensitivity;
 
-                _Yaw += yaw + (GamePad.RSX * DeltaTime);
+                _Yaw += yaw + ((GamePad.GetAxis((int)Gamepad.RightStickX) + (SpaceMouse.GetAxis((int)SixDOFAxis.RY)* -0.0005f)) * DeltaTime);
                 return _Yaw;
             }
         }
@@ -377,7 +384,7 @@ namespace FuseeApp
                 if (Mouse.RightButton)
                     pitch = Mouse.YVel * MouseSensitivity;
 
-                _Pitch += pitch + (GamePad.RSY * -DeltaTime);
+                _Pitch += pitch + ((GamePad.GetAxis((int)Gamepad.RightStickY) + (SpaceMouse.GetAxis((int)SixDOFAxis.RX)* 0.0005f)) * -DeltaTime);
                 return _Pitch;
             }
         }
@@ -446,8 +453,9 @@ namespace FuseeApp
             MouseSensitivity = 0.00005f;
             if (cameraType == CameraType.FREE)
             {
-                Position += float3.Transform(float3.UnitX * (Keyboard.ADAxis + GamePad.LSX) * DeltaTime * 8, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
-                Position += float3.Transform(float3.UnitZ * (Keyboard.WSAxis + GamePad.LSY) * DeltaTime * 8, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
+                Position += float3.Transform(float3.UnitX * (Keyboard.ADAxis + GamePad.GetAxis((int)Gamepad.LeftStickX) + (SpaceMouse.GetAxis((int)SixDOFAxis.TX)* 0.0005f)) * DeltaTime * 8, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
+                Position += float3.Transform(float3.UnitZ * (Keyboard.WSAxis + GamePad.GetAxis((int)Gamepad.LeftStickY)+ (SpaceMouse.GetAxis((int)SixDOFAxis.TZ)* 0.0005f)) * DeltaTime * 8, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
+                
                 if (_cameraType == CameraType.FREE)
                     SetPositionLocally(Position);
             }
@@ -456,6 +464,7 @@ namespace FuseeApp
         }
 
     }
+    #endregion
 
     [FuseeApplication(Name = "Droneflight", Description = "Droneflight Demo")]
 
@@ -478,7 +487,8 @@ namespace FuseeApp
         private CameraType _cameraType;
         private SceneContainer _gui;
         public String _text;
-        private InputDevice _gamepad;
+        private InputDevice GamePad;
+        private InputDevice SpaceMouse;
         // TODO: private GamePadDevice _gamepad;
         private float wait;
 
@@ -508,7 +518,12 @@ namespace FuseeApp
             _guiRenderer = new SceneRenderer(_gui);
 
             DroneRoot = _droneScene.Children.FindNodes(node => node.Name == "Body")?.FirstOrDefault();
-        }
+            GamePad = Devices.First(dev => dev.Category == DeviceCategory.GameController);
+            SpaceMouse = Devices.First(dev => dev.Category == DeviceCategory.SixDOF);
+            
+            } //Devices.First(dev => dev.Category == DeviceCategory.GameController);
+        
+        
 
         // RenderAFrame is called once a frame
         public override void RenderAFrame()
@@ -528,7 +543,7 @@ namespace FuseeApp
             wait++;
 
             if (wait >= 25)
-                if (Keyboard.IsKeyUp(KeyCodes.Q) || GamePad.YButton)
+                if (Keyboard.IsKeyUp(KeyCodes.Q) || GamePad.GetButton((int)Gamepad.Y))
                 {
                     _cameraType++;
                     wait = 0;
@@ -536,9 +551,9 @@ namespace FuseeApp
                     Diagnostics.Log(_cameraType);
                 }
 
-            if (GamePad.StartButton)
+            if (GamePad.GetButton((int)Gamepad.Start))
                 TimeScale = 0;
-            if (GamePad.BackButton)
+            if (GamePad.GetButton((int)Gamepad.Back))
                 TimeScale = 1;
 
             if (_cameraType == CameraType.FREE)
