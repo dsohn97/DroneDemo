@@ -487,9 +487,10 @@ namespace FuseeApp
         private CameraType _cameraType;
         private SceneContainer _gui;
         public String _text;
-        private InputDevice GamePad;
+        private InputDevice _GamePad;
         private InputDevice SpaceMouse;
-        // TODO: private GamePadDevice _gamepad;
+        private GamePadDevice GamePad;
+        
         private float wait;
 
         // Init is called on startup. 
@@ -518,8 +519,10 @@ namespace FuseeApp
             _guiRenderer = new SceneRenderer(_gui);
 
             DroneRoot = _droneScene.Children.FindNodes(node => node.Name == "Body")?.FirstOrDefault();
-            GamePad = Devices.First(dev => dev.Category == DeviceCategory.GameController);
+            _GamePad = Devices.First(dev => dev.Category == DeviceCategory.GameController);
             SpaceMouse = Devices.First(dev => dev.Category == DeviceCategory.SixDOF);
+            GamePadDevice GamePadInput = GetDevice<GamePadDevice>();
+            GamePad = Input.Instance.GamePadInput;
             
             } //Devices.First(dev => dev.Category == DeviceCategory.GameController);
         
@@ -530,11 +533,13 @@ namespace FuseeApp
 
         {
 
-
+            var t = GamePad.LT;
 
             // Clear the backbuffer
 
             RC.Clear(ClearFlags.Color | ClearFlags.Depth);
+            
+            
 
             // Switch between Drone and Freefly            
             if (_cameraType == CameraType.Reset)
