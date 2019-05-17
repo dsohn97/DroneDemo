@@ -383,7 +383,7 @@ namespace FuseeApp
                 if (Mouse.RightButton)
                     pitch = Mouse.YVel * MouseSensitivity;
 
-                _Pitch += pitch + ((_gamePad.RSY + (_spaceMouse.Rotation.x * 0.0005f)) * -DeltaTime);
+                _Pitch += pitch + ((_gamePad.RSY + (_spaceMouse.Rotation.x * 0.00015f)) * -DeltaTime);
                 return _Pitch;
             }
         }
@@ -488,14 +488,26 @@ namespace FuseeApp
         public String _text;
         public GamePadDevice _gamePad;
         public SixDOFDevice _spaceMouse;
-        
+        private float _initWindowWidth;
+        private float _initWindowHeight;
+        private float _initCanvasWidth;
+        private float _initCanvasHeight;
+        private const float ZNear = 1f;
+        private const float ZFar = 3000;
+        private float _aspectRatio;
+        private float _fovy = M.PiOver4;
         private float wait;
 
         // Init is called on startup. 
         public override void Init()
 
         {
+            
+            _initWindowWidth = Width;
+            _initWindowHeight = Height;
 
+            _initCanvasWidth = Width / 100f;
+            _initCanvasHeight = Height / 100f;
             // Set the clear color for the backbuffer to white (100% intensity in all color channels R, G, B, A).
 
             RC.ClearColor = new float4(0.7f, 0.9f, 0.5f, 1);
@@ -608,22 +620,13 @@ namespace FuseeApp
 
             var text = new TextNodeContainer(
                 textToDisplay,
-                "ButtonText",
+                "SceneDescriptionText",
                 vsTex,
                 psTex,
-                new MinMaxRect
-                {
-                    Min = new float2(0, 0),
-                    Max = new float2(1, 0)
-                },
-                new MinMaxRect
-                {
-                    Min = new float2(4f, 0f),
-                    Max = new float2(-4, 0.5f)
-                },
+                UIElementPosition.GetAnchors(AnchorPos.STRETCH_HORIZONTAL),
+                UIElementPosition.CalcOffsets(AnchorPos.STRETCH_HORIZONTAL, new float2(_initCanvasWidth / 2 - 4, 0), _initCanvasHeight, _initCanvasWidth, new float2(8, 1)),
                 _guiLatoBlack,
-                color,
-                 0.3f);
+                color, 200f);
 
             var canvas = new CanvasNodeContainer(
                 "Canvas",
@@ -635,6 +638,11 @@ namespace FuseeApp
                 }
             );
             canvas.Children.Add(text);
+            
+            //Create canvas projection component and add resize delegate
+            var canvasProjComp = new ProjectionComponent(ProjectionMethod.ORTHOGRAPHIC, ZNear, ZFar, _fovy);
+            canvas.Components.Insert(0, canvasProjComp);
+            AddResizeDelegate(delegate { canvasProjComp.Resize(Width, Height); });
 
             return new SceneContainer
             {
