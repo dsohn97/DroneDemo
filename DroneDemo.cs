@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 using Fusee.Base.Common;
 
@@ -70,7 +69,7 @@ namespace FuseeApp
         GamePadDevice _gamePad = GetDevice<GamePadDevice>();
         SixDOFDevice _spaceMouse = GetDevice<SixDOFDevice>();
         public SceneNodeContainer DroneRoot
-            
+
         {
             get
             {
@@ -325,7 +324,7 @@ namespace FuseeApp
         }
     }
     #endregion
-    
+
     #region Camera
     internal class Camera
     {
@@ -339,7 +338,7 @@ namespace FuseeApp
         SixDOFDevice _spaceMouse = GetDevice<SixDOFDevice>();
         public Camera()
         {
-            
+
         }
         public float MovementSpeed
         {
@@ -466,23 +465,19 @@ namespace FuseeApp
     #endregion
 
     [FuseeApplication(Name = "Droneflight", Description = "Droneflight Demo")]
-
     public class DroneDemo : RenderCanvas
 
     {
-
         private Camera _camera;
         private Drone _drone;
         private float4x4 view;
 
         // Variables init
-
         private const float RotationSpeed = 7;
         public SceneContainer _droneScene;
         private SceneRenderer _sceneRenderer;
         private SceneRenderer _guiRenderer;
         private SceneNodeContainer DroneRoot;
-
         private CameraType _cameraType;
         private SceneContainer _gui;
         public String _text;
@@ -499,13 +494,13 @@ namespace FuseeApp
         private float wait;
         private float _canvasWidth = 16;
         private float _canvasHeight = 9;
-     
+
 
         // Init is called on startup. 
         public override void Init()
 
         {
-            
+
             _initWindowWidth = Width;
             _initWindowHeight = Height;
 
@@ -519,8 +514,8 @@ namespace FuseeApp
             // Set the clear color for the backbuffer to white (100% intensity in all color channels R, G, B, A).
 
             RC.ClearColor = new float4(0.7f, 0.9f, 0.5f, 1);
-            
-            
+
+
 
 
             // Load the drone model
@@ -543,11 +538,9 @@ namespace FuseeApp
             DroneRoot = _droneScene.Children.FindNodes(node => node.Name == "Body")?.FirstOrDefault();
             _gamePad = GetDevice<GamePadDevice>();
             _spaceMouse = GetDevice<SixDOFDevice>();
-            
-            
+
             } 
-        
-        
+
 
         // RenderAFrame is called once a frame
         public override void RenderAFrame()
