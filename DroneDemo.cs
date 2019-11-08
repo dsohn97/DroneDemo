@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 using Fusee.Base.Common;
 
@@ -68,7 +67,7 @@ namespace FuseeApp
         private float Pitch;
         public float4x4 view;
         public SceneNodeContainer DroneRoot
-            
+
         {
             get
             {
@@ -316,7 +315,7 @@ namespace FuseeApp
         }
     }
     #endregion
-    
+
     #region Camera
     internal class Camera
     {
@@ -328,7 +327,7 @@ namespace FuseeApp
         private float _MouseSensitivity;
         public Camera()
         {
-            
+
         }
         public float MovementSpeed
         {
@@ -452,23 +451,19 @@ namespace FuseeApp
     #endregion
 
     [FuseeApplication(Name = "Droneflight", Description = "Droneflight Demo")]
-
     public class DroneDemo : RenderCanvas
 
     {
-
         private Camera _camera;
         private Drone _drone;
         private float4x4 view;
 
         // Variables init
-
         private const float RotationSpeed = 7;
         public SceneContainer _droneScene;
         private SceneRenderer _sceneRenderer;
         private SceneRenderer _guiRenderer;
         private SceneNodeContainer DroneRoot;
-
         private CameraType _cameraType;
         private SceneContainer _gui;
         public String _text;
@@ -481,28 +476,36 @@ namespace FuseeApp
         private float _aspectRatio;
         private float _fovy = M.PiOver4;
         private float wait;
+        private float _canvasWidth = 16;
+        private float _canvasHeight = 9;
+
 
         // Init is called on startup. 
         public override void Init()
 
         {
-            
+
             _initWindowWidth = Width;
             _initWindowHeight = Height;
 
             _initCanvasWidth = Width / 100f;
             _initCanvasHeight = Height / 100f;
+
+            _canvasHeight = _initCanvasHeight;
+            _canvasWidth = _initCanvasWidth;
+
+            _aspectRatio = Width / (float)Height;
             // Set the clear color for the backbuffer to white (100% intensity in all color channels R, G, B, A).
 
             RC.ClearColor = new float4(0.7f, 0.9f, 0.5f, 1);
-            
-            _gui = CreateGui();
+
+
 
 
             // Load the drone model
             _droneScene = AssetStorage.Get<SceneContainer>("GroundNoMat.fus");
             var droneBody = _droneScene.Children.FindNodes(node => node.Name == "Body")?.FirstOrDefault();
-
+            _gui = CreateGui();
             _drone = new Drone(droneBody);
 
             _camera = new Camera();
@@ -520,8 +523,7 @@ namespace FuseeApp
             
             
             } 
-        
-        
+
 
         // RenderAFrame is called once a frame
         public override void RenderAFrame()
@@ -561,9 +563,13 @@ namespace FuseeApp
 
             _sceneRenderer.Render(RC);
 
-            //_guiRenderer.Render(RC);
+            var projection = float4x4.CreateOrthographic(Width, Height, ZNear, ZFar);
+            RC.Projection = projection;
 
+          //  _guiRenderer.Render(RC);
 
+            projection = float4x4.CreatePerspectiveFieldOfView(_fovy, _aspectRatio, ZNear, ZFar);
+            RC.Projection = projection;
 
             // Swap buffers: Show the contents of the backbuffer (containing the currently rendered frame) on the front buffer.
 
@@ -586,13 +592,22 @@ namespace FuseeApp
         {
             var vsTex = AssetStorage.Get<string>("texture.vert");
             var psTex = AssetStorage.Get<string>("texture.frag");
-            var color = ColorUint.Tofloat4(ColorUint.Greenery);
 
-            var fontLato = AssetStorage.Get<Font>("Lato-Black.ttf");
-            var _guiLatoBlack = new FontMap(fontLato, 36);
 
             // Initialize the information text line.
-            var textToDisplay = "Drone Simulation";
+            var textToDisplay = "Drone Demo";
+            if (_droneScene.Header.CreatedBy != null || _droneScene.Header.CreationDate != null)
+            {
+                textToDisplay += " created";
+                if (_droneScene.Header.CreatedBy != null)
+                    textToDisplay += " by " + _droneScene.Header.CreatedBy;
+
+                if (_droneScene.Header.CreationDate != null)
+                    textToDisplay += " on " + _droneScene.Header.CreationDate;
+            }
+
+            var fontLato = AssetStorage.Get<Font>("Lato-Black.ttf");
+            var guiLatoBlack = new FontMap(fontLato, 18);
 
             var text = new TextNodeContainer(
                 textToDisplay,
@@ -601,20 +616,20 @@ namespace FuseeApp
                 psTex,
                 UIElementPosition.GetAnchors(AnchorPos.STRETCH_HORIZONTAL),
                 UIElementPosition.CalcOffsets(AnchorPos.STRETCH_HORIZONTAL, new float2(_initCanvasWidth / 2 - 4, 0), _initCanvasHeight, _initCanvasWidth, new float2(8, 1)),
-                _guiLatoBlack,
-                color, 200f);
+                guiLatoBlack,
+                ColorUint.Tofloat4(ColorUint.Greenery), 200f);
+
 
             var canvas = new CanvasNodeContainer(
                 "Canvas",
                 CanvasRenderMode.SCREEN,
                 new MinMaxRect
                 {
-                    Min = new float2(-8, -4.5f),
-                    Max = new float2(8, 4.5f)
-                }
-            );
+                    Min = new float2(-_canvasWidth / 2, -_canvasHeight / 2f),
+                    Max = new float2(_canvasWidth / 2, _canvasHeight / 2f)
+                });
             canvas.Children.Add(text);
-            
+
             //Create canvas projection component and add resize delegate
             var canvasProjComp = new ProjectionComponent(ProjectionMethod.ORTHOGRAPHIC, ZNear, ZFar, _fovy);
             canvas.Components.Insert(0, canvasProjComp);
