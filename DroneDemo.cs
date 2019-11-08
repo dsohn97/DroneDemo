@@ -67,8 +67,6 @@ namespace FuseeApp
         private float Yaw;
         private float Pitch;
         public float4x4 view;
-        GamePadDevice _gamePad = GetDevice<GamePadDevice>();
-        SixDOFDevice _spaceMouse = GetDevice<SixDOFDevice>();
         public SceneNodeContainer DroneRoot
             
         {
@@ -197,15 +195,11 @@ namespace FuseeApp
                 if (_rotation.z > -0.2)
                     _rotation.z -= 0.01f;
 
-            if (_gamePad.LSX != 0 || _spaceMouse.Rotation.x != 0)
-                _rotation.x = -_gamePad.LSX * 0.25f + _spaceMouse.Translation.z * -0.0001f;
-
-            if (_gamePad.LSX != 0 || _spaceMouse.Rotation.z != 0)
-                _rotation.z = _gamePad.LSX * 0.25f + _spaceMouse.Translation.x * 0.0001f;
 
         }
         public Quaternion orientation(float Yaw, float Pitch)
         {
+            
             Orientation = Quaternion.FromAxisAngle(float3.UnitY, Yaw) *
                             Quaternion.FromAxisAngle(float3.UnitX, Pitch);
             return Orientation;
@@ -242,7 +236,7 @@ namespace FuseeApp
                 mouse = (Mouse.XVel * 0.0005f);
             }
 
-            _rotation.y = _rotation.y + mouse + ( _spaceMouse.Rotation.y * -0.00005f) - _gamePad.LT * DeltaTime + _gamePad.RT * DeltaTime;
+            _rotation.y = _rotation.y + mouse;
 
             if (Keyboard.WSAxis == 0)
                 speedx = 0.02f;
@@ -259,30 +253,27 @@ namespace FuseeApp
                     speedz += 0.005f;
 
 
-            float posVelX = -Keyboard.WSAxis * speedx * (DeltaTime * 15) - _gamePad.LSY * DeltaTime * 8 + (_spaceMouse.Translation.z * -0.0001f);
-            float posVelZ = -Keyboard.ADAxis * speedz * (DeltaTime * 15) - _gamePad.LSX * DeltaTime * 8 - (_spaceMouse.Translation.x * 0.0001f);
+            float posVelX = -Keyboard.WSAxis * speedx * (DeltaTime * 15);
+            float posVelZ = -Keyboard.ADAxis * speedz * (DeltaTime * 15);
             float3 newPos = DroneposOld;
 
-            newPos += float3.Transform(float3.UnitX * posVelZ, orientation(_rotation.y, 0));
-            newPos += float3.Transform(float3.UnitZ * posVelX, orientation(_rotation.y, 0));
+            newPos += float3.Rotate(orientation(_rotation.y, 0), float3.UnitX * posVelZ);
+            newPos += float3.Rotate(orientation(_rotation.y, 0), float3.UnitZ * posVelX);
 
             // Height
-            if (Keyboard.GetKey(KeyCodes.R) || _gamePad.RightButton)
+            if (Keyboard.GetKey(KeyCodes.R))
                 newPos.y += 0.1f;
-            if (Keyboard.GetKey(KeyCodes.F) || _gamePad.LeftButton)
+            if (Keyboard.GetKey(KeyCodes.F))
             {
                 height = 0.1f;
                 if (newPos.y <= 0.5f)
                     height = 0;
                 newPos.y -= height;
             }
-            newPos.y += _spaceMouse.Translation.y * 0.00015f;
             Position = newPos;
 
             var posVec = float3.Normalize(camPosOld - Position);
             var camposnew = Position + posVec * d;
-            Yaw += _gamePad.RSX * DeltaTime;
-            Pitch += _gamePad.RSY * DeltaTime;
             if (Mouse.RightButton)
             {
                 Yaw += Mouse.XVel * 0.0005f;
@@ -303,7 +294,7 @@ namespace FuseeApp
             if (_cameraType == CameraType.DRONE)
             {
                 view = float4x4.LookAt(
-                                                      new float3(DroneposOld) + d * float3.Transform(float3.UnitZ, orientation(rot, -0.3f)),
+                                                      new float3(DroneposOld) + d * float3.Rotate(orientation(rot, -0.3f),float3.UnitZ),
                                                       new float3(Position),
                                                       float3.UnitY
                                                       );
@@ -311,7 +302,7 @@ namespace FuseeApp
             if (_cameraType == CameraType.FOLLOW)
             {
                 view = float4x4.LookAt(
-                                                     new float3(DroneposOld) + d * float3.Transform(float3.UnitZ, orientation(Yaw, Pitch)),
+                                                     new float3(DroneposOld) + d * float3.Rotate(orientation(Yaw, Pitch),float3.UnitZ),
                                                      new float3(Position),
                                                      float3.UnitY
                                                      );
@@ -335,8 +326,6 @@ namespace FuseeApp
         public float _Yaw;
         public float _Pitch;
         private float _MouseSensitivity;
-        GamePadDevice _gamePad = GetDevice<GamePadDevice>();
-        SixDOFDevice _spaceMouse = GetDevice<SixDOFDevice>();
         public Camera()
         {
             
@@ -370,9 +359,7 @@ namespace FuseeApp
                 float yaw = 0;
                 if (Mouse.RightButton)
                     yaw = Mouse.XVel * MouseSensitivity;
-
-                _Yaw += yaw + ((_gamePad.RSX + (_spaceMouse.Rotation.y * -0.0005f)) * DeltaTime);
-                return _Yaw;
+                return _Yaw += yaw;
             }
         }
         public float Pitch
@@ -382,9 +369,7 @@ namespace FuseeApp
                 float pitch = 0;
                 if (Mouse.RightButton)
                     pitch = Mouse.YVel * MouseSensitivity;
-
-                _Pitch += pitch + ((_gamePad.RSY + (_spaceMouse.Rotation.x * 0.00015f)) * -DeltaTime);
-                return _Pitch;
+                return _Pitch += pitch;
             }
         }
         public float3 Position
@@ -428,14 +413,14 @@ namespace FuseeApp
             get
             {
                 var Orientation = Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch);
-                return float3.Transform(float3.UnitZ, Orientation);
+                return float3.Rotate(Orientation, float3.UnitZ);
             }
         }
         public float4x4 ViewMatrix
         {
             get
             {
-                return float4x4.LookAt(Position, Position + ForwardVector, float3.UnitY); ;
+                return float4x4.LookAt(Position, Position + ForwardVector, float3.UnitY);
             }
         }
         public void SetCameraType()
@@ -452,9 +437,10 @@ namespace FuseeApp
             MouseSensitivity = 0.00005f;
             if (cameraType == CameraType.FREE)
             {
-                Position += float3.Transform(float3.UnitX * (Keyboard.ADAxis + _gamePad.LSX + (_spaceMouse.Translation.x * 0.0005f)) * DeltaTime * 8, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
-                Position += float3.Transform(float3.UnitZ * (Keyboard.WSAxis + _gamePad.LSY + (_spaceMouse.Translation.z * 0.0005f)) * DeltaTime * 8, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
-                Position += float3.Transform(float3.UnitY * (_spaceMouse.Translation.y * 0.0005f) * DeltaTime * 8, Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch));
+
+                Position += float3.Rotate(Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch), float3.UnitX * (Keyboard.ADAxis * DeltaTime * 8));
+                Position += float3.Rotate(Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch),float3.UnitZ * (Keyboard.WSAxis * DeltaTime * 8));
+                Position += float3.Rotate(Quaternion.FromAxisAngle(float3.UnitY, Yaw) * Quaternion.FromAxisAngle(float3.UnitX, Pitch), float3.UnitY * (Keyboard.UpDownAxis * DeltaTime * 8));
                 if (_cameraType == CameraType.FREE)
                     SetPositionLocally(Position);
             }
@@ -486,8 +472,6 @@ namespace FuseeApp
         private CameraType _cameraType;
         private SceneContainer _gui;
         public String _text;
-        public GamePadDevice _gamePad;
-        public SixDOFDevice _spaceMouse;
         private float _initWindowWidth;
         private float _initWindowHeight;
         private float _initCanvasWidth;
@@ -533,8 +517,6 @@ namespace FuseeApp
             _guiRenderer = new SceneRenderer(_gui);
 
             DroneRoot = _droneScene.Children.FindNodes(node => node.Name == "Body")?.FirstOrDefault();
-            _gamePad = GetDevice<GamePadDevice>();
-            _spaceMouse = GetDevice<SixDOFDevice>();
             
             
             } 
@@ -545,7 +527,6 @@ namespace FuseeApp
         public override void RenderAFrame()
 
         {
-
             // Clear the backbuffer
 
             RC.Clear(ClearFlags.Color | ClearFlags.Depth);
@@ -559,18 +540,13 @@ namespace FuseeApp
             wait++;
 
             if (wait >= 25)
-                if (Keyboard.IsKeyUp(KeyCodes.Q) || _gamePad.GetButton((int)Gamepad.Y))
+                if (Keyboard.IsKeyUp(KeyCodes.Q))
                 {
                     _cameraType++;
                     wait = 0;
 
                     Diagnostics.Log(_cameraType);
                 }
-
-            if (_gamePad.GetButton((int)Gamepad.Start))
-                TimeScale = 0;
-            if (_gamePad.GetButton((int)Gamepad.Back))
-                TimeScale = 1;
 
             if (_cameraType == CameraType.FREE)
                 view = _camera.Update(_cameraType);

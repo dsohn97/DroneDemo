@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${env:FuseeRoot}bin/Debug/Player/Desktop/Fusee.Engine.Player.Desktop.dll",
-            "args": ["${workspaceRoot}/bin/Debug/netcoreapp2.0/DroneDemo.dll"],
+            "args": ["${workspaceRoot}/bin/Debug/netstandard2.0/DroneDemo.dll"],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
