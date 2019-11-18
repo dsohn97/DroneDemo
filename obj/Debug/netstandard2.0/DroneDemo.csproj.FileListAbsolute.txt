@@ -41,7 +41,6 @@ C:\Users\Daniel\Documents\Git\DroneTest\bin\Debug\netstandard2.0\DroneDemo.deps.
 C:\Users\Daniel\Documents\Git\DroneTest\bin\Debug\netstandard2.0\DroneDemo.dll
 C:\Users\Daniel\Documents\Git\DroneTest\bin\Debug\netstandard2.0\DroneDemo.pdb
 C:\Users\Daniel\Documents\Git\DroneTest\obj\Debug\netstandard2.0\DroneDemo.csprojAssemblyReference.cache
-C:\Users\Daniel\Documents\Git\DroneTest\obj\Debug\netstandard2.0\DroneDemo.csproj.CoreCompileInputs.cache
 C:\Users\Daniel\Documents\Git\DroneTest\obj\Debug\netstandard2.0\DroneDemo.AssemblyInfoInputs.cache
 C:\Users\Daniel\Documents\Git\DroneTest\obj\Debug\netstandard2.0\DroneDemo.AssemblyInfo.cs
 C:\Users\Daniel\Documents\Git\DroneTest\obj\Debug\netstandard2.0\DroneDemo.dll

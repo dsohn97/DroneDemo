@@ -16,7 +16,7 @@
         {
             "dependsOn": ["build"],
             "taskName": "Publish FUSEE Desktop app",
-            "command": "${env:FuseeRoot}/bin/Debug/Tools/fusee publish --platform Desktop",
+            "command": "C:/Users/Daniel/Documents/Git/Fusee/bin/Debug/Tools/fusee publish --platform Desktop",
             "type": "shell",
             "group": "build",
             "presentation": {
